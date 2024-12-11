@@ -6,7 +6,7 @@ export const GeneralInfoCard = () => {
     const { amount, leverage } = useStore();
 
     return (
-        <div className="flex w-full justify-center max-w-md md:mt-4 md:w-1/2 md:max-w-none">
+        <div className="flex w-full justify-center max-w-md md:w-1/2 md:max-w-none">
             <div className="p-4 bg-[rgb(31,33,45)] bg-opacity-100 flex flex-col gap-3 w-full h-fit rounded-lg text-base">
                 <InfoSection
                     title="Final State"

@@ -1,6 +1,4 @@
 import { useEffect } from 'react';
-import { Button } from '@nextui-org/react';
-import { InputAmount, SliderAmount, TitleAmount } from './_components';
 import { useAccount, useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
 import { useAppKit } from '@reown/appkit/react';
 import {
@@ -10,6 +8,9 @@ import {
 import { useStore } from '@/shared/hooks/useStore';
 import { parseUnits } from 'viem';
 import toast from 'react-hot-toast';
+import { Button } from '@/shared/ui/button';
+import { ShortPosition } from './_components/ShortPosition';
+import { LongPosition } from './_components/LongPosition';
 
 export const CreatePositionCard = () => {
     const { isConnected, chain } = useAccount();
@@ -62,15 +63,11 @@ export const CreatePositionCard = () => {
     }, [status, receiptError, writeError]);
 
     return (
-        <div className="flex flex-col gap-6 p-4 md:mt-4 w-full bg-[rgb(31,33,45)] bg-opacity-100 rounded-lg md:w-1/2 md:max-w-none max-w-md">
-            <TitleAmount chain={chain?.name} />
-
-            <InputAmount />
-
-            <SliderAmount />
-
+        <>
+            <LongPosition />
+            <ShortPosition />
             {isConnected ? (
-                <Button onClick={handleSubmit} isLoading={isPending || isLoading}>
+                <Button className="w-1/3" onClick={handleSubmit} isLoading={isPending || isLoading}>
                     {isPending
                         ? 'Please confirm in your wallet...'
                         : isLoading
@@ -78,8 +75,10 @@ export const CreatePositionCard = () => {
                           : 'Submit Deposit'}
                 </Button>
             ) : (
-                <Button onClick={() => open()}>Connect Wallet</Button>
+                <Button className="w-1/3" onClick={() => open()}>
+                    Connect Wallet
+                </Button>
             )}
-        </div>
+        </>
     );
 };
