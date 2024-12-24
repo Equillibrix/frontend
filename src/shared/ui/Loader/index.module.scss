@@ -1,0 +1,43 @@
+$size: 60px;
+$border-offset: calc(0.353 * #{$size});
+
+.loader {
+  width: calc(#{$size} + #{$border-offset});
+  aspect-ratio: 1;
+  display: grid;
+
+  &::before,
+  &::after {
+    content: "";
+    grid-area: 1/1;
+    clip-path: polygon(#{$border-offset} 0, 100% 0, 100% calc(100% - #{$border-offset}), calc(100% - #{$border-offset}) 100%, 0 100%, 0 #{$border-offset});
+    background: linear-gradient(to top right, #a1c4fd, #c2e9fb);
+    animation: movement 2s infinite;
+  }
+
+  &::after {
+    animation-delay: -1s;
+  }
+}
+
+@keyframes movement {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  25% {
+    transform: translate(90px, 0);
+  }
+
+  50% {
+    transform: translate(90px, 90px);
+  }
+
+  75% {
+    transform: translate(0, 90px);
+  }
+
+  100% {
+    transform: translate(0, 0);
+  }
+}

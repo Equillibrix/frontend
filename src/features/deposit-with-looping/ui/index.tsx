@@ -5,15 +5,17 @@ import { Link } from '@nextui-org/react';
 import { Card, Tooltip } from '@nextui-org/react';
 import { MyPositionCard } from '@/widgets/MyPositionCard/MyPositionCard';
 import { label } from 'framer-motion/client';
+import { useEffect, useState } from 'react';
+import { MainPageLoader } from '@/shared/ui/MainPageLoader';
 
 const totalSupply = 100;
 const totalBorrow = 75;
 const totalValue = 100;
 
 const data = [
-    { id: 1, label: "Your Total Supply", value: totalSupply },
-    { id: 2, label: "Total Value", value: totalValue },
-    { id: 3, label: "Your Total Borrow", value: totalBorrow }
+    { id: 1, label: 'Your Total Supply', value: totalSupply },
+    { id: 2, label: 'Total Value', value: totalValue },
+    { id: 3, label: 'Your Total Borrow', value: totalBorrow },
 ];
 
 export const DepositWithLoopingCard = () => {
@@ -21,11 +23,25 @@ export const DepositWithLoopingCard = () => {
 
     const handleManage = () => {
         console.log('Manage position');
+    };
+
+    //TODO: delete -> imitation for visual testing
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 2000);
+
+        return () => clearTimeout(timer);
+    }, []);
+
+    if (isLoading) {
+        return <MainPageLoader />;
     }
 
-
     return (
-        <div className="flex flex-col gap-1 overflow-auto"> 
+        <div className="flex flex-col gap-1 overflow-auto">
             <h1 className="text-4xl font-bold text-white mb-8 text-center">Dashboard</h1>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -56,7 +72,7 @@ export const DepositWithLoopingCard = () => {
 
             {isPositionsExist ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2">
-                    <MyPositionCard 
+                    <MyPositionCard
                         id="1460"
                         token1="ETH"
                         token2="USDT"
@@ -66,7 +82,8 @@ export const DepositWithLoopingCard = () => {
                         borrowAPY={10.55}
                         ratio={14.84}
                         maxRatio={90}
-                        onManage={handleManage} />
+                        onManage={handleManage}
+                    />
                 </div>
             ) : (
                 <div className="bg-[rgb(31,33,45)] bg-opacity-100 p-4 backdrop-blur-md flex items-center justify-center py-12 rounded-xl">
