@@ -1,10 +1,5 @@
-import { Spinner } from '@nextui-org/react';
+import { Loader } from '@/shared/ui';
 
 export default function Loading() {
-    return (
-        <div>
-            <Spinner size="lg" />
-            <span>Loading...</span>
-        </div>
-    );
+    return <Loader />;
 }
