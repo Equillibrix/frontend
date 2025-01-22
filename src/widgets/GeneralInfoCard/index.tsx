@@ -1,9 +1,11 @@
 import { Divider } from '@nextui-org/react';
 import { InfoSection } from './_components/InfoBlock';
 import { useStore } from '@/shared/hooks/useStore';
+import { useFundingRate } from '@/shared/hooks/useFundingRate';
 
 export const GeneralInfoCard = () => {
     const { amount, leverage } = useStore();
+    const { averageRate, isLoading, error } = useFundingRate();
 
     return (
         <div className="flex w-full justify-center max-w-md md:w-1/2 md:max-w-none">
@@ -26,6 +28,26 @@ export const GeneralInfoCard = () => {
                         { label: 'Liquidation Price', value: '1,157212' },
                         { label: 'Current Price', value: '1,1834342' },
                     ]}
+                />
+
+                <Divider />
+
+                <InfoSection
+                    title="Funding Rate (Last 3 Months)"
+                    items={
+                        isLoading
+                            ? [{ label: 'Loading...', value: '' }]
+                            : error
+                              ? [{ label: 'Error', value: error }]
+                              : averageRate !== null
+                                ? [
+                                      {
+                                          label: 'Average Funding Rate',
+                                          value: `${averageRate.toFixed(8)}%`,
+                                      },
+                                  ]
+                                : [{ label: 'No data available', value: '' }]
+                    }
                 />
             </div>
         </div>
