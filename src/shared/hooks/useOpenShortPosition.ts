@@ -1,10 +1,15 @@
 import ccxt from 'ccxt';
+import { useTransferUSDC } from './useTransferUSDC';
+import { WriteContractMutate } from 'wagmi/query';
+import { Config } from 'wagmi';
 
 interface IProps {
     shortAmount: string;
     shortLeverage: number;
     address: `0x${string}` | undefined;
     setIsShortPositionLoading: (arg0: boolean) => void;
+    hyperliquidAddress: string;
+    writeContract: WriteContractMutate<Config, unknown>;
 }
 
 const useOpenShortPosition = async ({
@@ -12,12 +17,25 @@ const useOpenShortPosition = async ({
     shortLeverage,
     address,
     setIsShortPositionLoading,
+    hyperliquidAddress,
+    writeContract,
 }: IProps) => {
     if (!address) return;
+
+    const { handleTransfer } = useTransferUSDC();
+
     try {
         setIsShortPositionLoading(true);
+
+        await handleTransfer({
+            amount: shortAmount,
+            address,
+            hyperliquidAddress,
+            writeContract,
+        });
+
         const exchange = new ccxt.hyperliquid();
-        exchange.walletAddress = address;
+        exchange.walletAddress = hyperliquidAddress;
         exchange.privateKey = process.env.NEXT_PUBLIC_API_PRIVATE_KEY!;
 
         exchange.setSandboxMode(true);

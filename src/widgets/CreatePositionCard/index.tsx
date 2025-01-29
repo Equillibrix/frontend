@@ -41,11 +41,12 @@ export const CreatePositionCard = () => {
                 shortLeverage,
                 address,
                 setIsShortPositionLoading,
+                hyperliquidAddress: '0x9b595863Ec86637B61f48a059fd563421E7fb994',
+                writeContract,
             });
         }
     };
 
-    // TODO check isLoading with real RPC
     const {
         error: receiptError,
         status,
