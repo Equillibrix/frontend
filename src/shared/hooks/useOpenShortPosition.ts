@@ -22,17 +22,17 @@ const useOpenShortPosition = async ({
 }: IProps) => {
     if (!address) return;
 
-    const { handleTransfer } = useTransferUSDC();
+    // const { handleTransfer } = useTransferUSDC();
 
     try {
         setIsShortPositionLoading(true);
 
-        await handleTransfer({
-            amount: shortAmount,
-            address,
-            hyperliquidAddress,
-            writeContract,
-        });
+        // await handleTransfer({
+        //     amount: shortAmount,
+        //     address,
+        //     hyperliquidAddress,
+        //     writeContract,
+        // });
 
         const exchange = new ccxt.hyperliquid();
         exchange.walletAddress = hyperliquidAddress;
