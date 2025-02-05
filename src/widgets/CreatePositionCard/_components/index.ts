@@ -1,3 +1,3 @@
-export * from './InputAmount'
-export * from './SliderAmount'
-export * from './TitleAmount'
+export * from './TotalPosition'
+export * from './LongPosition'
+export * from './ShortPosition'

@@ -1,10 +1,10 @@
 import { useAccount } from 'wagmi';
 import { Platform, TitleAmount } from '../TitleAmount';
-import { InfoSection } from '@/widgets/GeneralInfoCard/_components/InfoBlock';
 import { Divider } from '@nextui-org/react';
 import { useStore } from '@/shared/hooks/useStore';
 import { getShortAmount } from '@/shared/lib/getShortAmount';
 import { getShortDebt } from '@/shared/lib/getShortDebt';
+import { GeneralInfoCard } from '../GeneralInfoCard';
 
 export const ShortPosition = () => {
     const { chain } = useAccount();
@@ -16,7 +16,7 @@ export const ShortPosition = () => {
 
             <TitleAmount chain={chain?.name} platform={Platform.HYPERLIQUID} />
 
-            <InfoSection
+            <GeneralInfoCard
                 title="Final State"
                 items={[
                     { label: 'Amount', value: getShortAmount(amount, leverage) },
@@ -30,7 +30,7 @@ export const ShortPosition = () => {
 
             <Divider />
 
-            <InfoSection
+            <GeneralInfoCard
                 title="Liquidation Info"
                 items={[
                     { label: 'Liquidation Price', value: '1,157212' },

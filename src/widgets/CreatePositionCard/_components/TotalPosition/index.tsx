@@ -1,7 +1,7 @@
 import { Divider } from '@nextui-org/react';
 import { InputAmount } from '../InputAmount';
 import { SliderAmount } from '../SliderAmount';
-import { InfoSection } from '@/widgets/GeneralInfoCard/_components/InfoBlock';
+import { GeneralInfoCard } from '../GeneralInfoCard';
 
 export const TotalPosition = () => {
     return (
@@ -15,7 +15,7 @@ export const TotalPosition = () => {
                 <Divider />
 
                 {/* TODO: Net APY,% = Net APY (Long)*(L/(L+1)) + Net APY (Short)/(L+1). */}
-                <InfoSection
+                <GeneralInfoCard
                     items={[
                         {
                             label: 'Net APY %',

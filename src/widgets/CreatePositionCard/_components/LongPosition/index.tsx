@@ -1,9 +1,9 @@
 import { useAccount } from 'wagmi';
 import { Platform, TitleAmount } from '../TitleAmount';
-import { InfoSection } from '@/widgets/GeneralInfoCard/_components/InfoBlock';
 import { Divider } from '@nextui-org/react';
 import { useStore } from '@/shared/hooks/useStore';
 import { getLongAmount } from '@/shared/lib/getLongAmount';
+import { GeneralInfoCard } from '../GeneralInfoCard';
 
 export const LongPosition = () => {
     const { chain } = useAccount();
@@ -15,7 +15,7 @@ export const LongPosition = () => {
 
             <TitleAmount chain={chain?.name} platform={Platform.FLUID} />
 
-            <InfoSection
+            <GeneralInfoCard
                 title="Final State"
                 items={[
                     { label: 'Amount', value: getLongAmount(amount, leverage) },
@@ -27,7 +27,7 @@ export const LongPosition = () => {
 
             <Divider />
 
-            <InfoSection
+            <GeneralInfoCard
                 title="Liquidation Info"
                 items={[
                     { label: 'Collateral Factor', value: '1,157212' },
