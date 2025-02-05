@@ -2,11 +2,17 @@ import Image from 'next/image';
 import EthIcon from '/public/eth.webp';
 import UsdtIcon from '/public/usdt.webp';
 
+export enum Platform {
+    FLUID = 'fluid',
+    HYPERLIQUID = 'Hyperliquid',
+}
+
 type Props = {
     chain?: string;
+    platform: Platform;
 };
 
-export const TitleAmount = ({ chain }: Props) => {
+export const TitleAmount = ({ chain, platform }: Props) => {
     return (
         <div className="flex items-center text-lg">
             <Image
@@ -24,7 +30,7 @@ export const TitleAmount = ({ chain }: Props) => {
                 className="mr-2 -ml-2 rounded-full overflow-hidden max-w-full h-auto"
             />
             <div className="flex flex-col gap-1">
-                <span className="whitespace-nowrap">ETH/USDT on Fluid</span>
+                <span className="whitespace-nowrap">ETH/USDC on {platform}</span>
                 {chain && (
                     <div className="flex gap-2 items-center text-sm">
                         <span>{chain}</span>
