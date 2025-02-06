@@ -22,7 +22,6 @@ export const SliderAmount = () => {
             maxValue={13}
             minValue={1}
             defaultValue={shortLeverage}
-            className="max-w-md"
             marks={MARKS}
             onChange={handleChange}
         />

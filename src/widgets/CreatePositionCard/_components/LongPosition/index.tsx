@@ -7,7 +7,7 @@ import { GeneralInfoCard } from '../GeneralInfoCard';
 
 export const LongPosition = () => {
     const { chain } = useAccount();
-    const { amount, leverage } = useStore();
+    const { longAmount, longLeverage } = useStore();
 
     return (
         <div className="flex flex-col gap-6 p-4 w-full bg-[rgb(31,33,45)] bg-opacity-100 rounded-lg md:w-1/2 md:max-w-none max-w-md">
@@ -18,9 +18,9 @@ export const LongPosition = () => {
             <GeneralInfoCard
                 title="Final State"
                 items={[
-                    { label: 'Amount', value: getLongAmount(amount, leverage) },
+                    { label: 'Amount', value: getLongAmount(longAmount, longLeverage) },
                     { label: 'Debt', value: '0' },
-                    { label: 'Leverage', value: leverage + 'x' },
+                    { label: 'Leverage', value: longLeverage + 'x' },
                     { label: 'Net APY %', value: '10.83%' },
                 ]}
             />

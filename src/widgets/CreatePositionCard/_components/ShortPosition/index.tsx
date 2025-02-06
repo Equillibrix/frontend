@@ -8,7 +8,7 @@ import { GeneralInfoCard } from '../GeneralInfoCard';
 
 export const ShortPosition = () => {
     const { chain } = useAccount();
-    const { amount, leverage } = useStore();
+    const { shortAmount, shortLeverage } = useStore();
 
     return (
         <div className="flex flex-col gap-6 p-4 w-full bg-[rgb(31,33,45)] bg-opacity-100 rounded-lg md:w-1/2 md:max-w-none max-w-md">
@@ -19,10 +19,10 @@ export const ShortPosition = () => {
             <GeneralInfoCard
                 title="Final State"
                 items={[
-                    { label: 'Amount', value: getShortAmount(amount, leverage) },
+                    { label: 'Amount', value: getShortAmount(shortAmount, shortLeverage) },
 
-                    { label: 'Debt', value: getShortDebt(amount, leverage) }, // from Hyperliquid or Amount(Short)*(L-1)
-                    { label: 'Leverage', value: leverage + 'x' },
+                    { label: 'Debt', value: getShortDebt(shortAmount, shortLeverage) }, // from Hyperliquid or Amount(Short)*(L-1)
+                    { label: 'Leverage', value: shortLeverage + 'x' },
                     { label: 'Net APY %', value: '10.83%' }, // from Hyperliquid or (Funding Rate)*24*365*L
                     { label: 'Funding Rate', value: '42.42%' }, // from Hyperliquid
                 ]}
