@@ -4,7 +4,7 @@ import { useStore } from '@/shared/hooks/useStore';
 
 export const InputAmount = () => {
     const userBalance = useGetBalance();
-    const { setAmount } = useStore();
+    const { setShortAmount } = useStore();
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === '+' || event.key === '-') {
@@ -20,7 +20,7 @@ export const InputAmount = () => {
     };
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setAmount(event.target.value);
+        setShortAmount(event.target.value);
     };
 
     return (

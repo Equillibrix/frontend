@@ -3,11 +3,11 @@ import { MARKS } from './_constants';
 import { useStore } from '@/shared/hooks/useStore';
 
 export const SliderAmount = () => {
-    const { setLeverage, leverage } = useStore();
+    const { shortLeverage, setShortLeverage } = useStore();
 
     const handleChange = (value: number | number[]) => {
         if (typeof value === 'number') {
-            setLeverage(value);
+            setShortLeverage(value);
         }
     };
 
@@ -21,7 +21,8 @@ export const SliderAmount = () => {
             getValue={(value) => `${value}x`}
             maxValue={13}
             minValue={1}
-            defaultValue={leverage}
+            defaultValue={shortLeverage}
+            className="max-w-md"
             marks={MARKS}
             onChange={handleChange}
         />

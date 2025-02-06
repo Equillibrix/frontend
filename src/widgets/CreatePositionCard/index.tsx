@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAccount, useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
 import { useAppKit } from '@reown/appkit/react';
 import {
@@ -10,28 +10,42 @@ import { parseUnits } from 'viem';
 import toast from 'react-hot-toast';
 import { Button } from '@/shared/ui/button';
 import { LongPosition, ShortPosition, TotalPosition } from './_components';
+import useOpenShortPosition from '@/shared/hooks/useOpenShortPosition';
 
 export const CreatePositionCard = () => {
-    const { isConnected, chain } = useAccount();
+    const { isConnected, chain, address } = useAccount();
     const { open } = useAppKit();
+    const [isShortPositionLoading, setIsShortPositionLoading] = useState<boolean>(false);
 
     const { data: hash, writeContract, isPending, error: writeError } = useWriteContract();
-    const { amount, leverage } = useStore();
+    const { longAmount, longLeverage, shortAmount, shortLeverage } = useStore();
 
-    const convertedSupplyAmount = parseUnits(amount.toString(), 18);
-    const convertedLeverage = leverage * 1000;
+    const convertedSupplyAmount = parseUnits(longAmount.toString(), 18);
+    const convertedLeverage = longLeverage * 1000;
     const convertedSlippage = 500;
 
     const handleSubmit = () => {
-        writeContract({
-            address: CONTRACT_ADDRESS_LONG_POSITION,
-            abi: CONTRACT_ABI_LONG_POSITION,
-            functionName: 'createPosition',
-            args: [convertedSupplyAmount, convertedLeverage, convertedSlippage],
-            value: convertedSupplyAmount,
-        });
+        if (convertedSupplyAmount && convertedLeverage) {
+            writeContract({
+                address: CONTRACT_ADDRESS_LONG_POSITION,
+                abi: CONTRACT_ABI_LONG_POSITION,
+                functionName: 'createPosition',
+                args: [convertedSupplyAmount, convertedLeverage, convertedSlippage],
+                value: convertedSupplyAmount,
+            });
+        }
+        if (shortAmount && shortLeverage) {
+            useOpenShortPosition({
+                shortAmount,
+                shortLeverage,
+                address,
+                setIsShortPositionLoading,
+                hyperliquidAddress: '0x9b595863Ec86637B61f48a059fd563421E7fb994',
+                writeContract,
+            });
+        }
     };
-    // TODO check isLoading with real RPC
+
     const {
         error: receiptError,
         status,
@@ -71,7 +85,12 @@ export const CreatePositionCard = () => {
             </div>
 
             {isConnected ? (
-                <Button className="w-1/3" onClick={handleSubmit} isLoading={isPending || isLoading}>
+                <Button
+                    className="w-1/3"
+                    onClick={handleSubmit}
+                    isLoading={isPending || isLoading || isShortPositionLoading}
+                    disabled={isShortPositionLoading}
+                >
                     {isPending
                         ? 'Please confirm in your wallet...'
                         : isLoading
