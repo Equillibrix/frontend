@@ -9,8 +9,7 @@ import { useStore } from '@/shared/hooks/useStore';
 import { parseUnits } from 'viem';
 import toast from 'react-hot-toast';
 import { Button } from '@/shared/ui/button';
-import { ShortPosition } from './_components/ShortPosition';
-import { LongPosition } from './_components/LongPosition';
+import { LongPosition, ShortPosition, TotalPosition } from './_components';
 import useOpenShortPosition from '@/shared/hooks/useOpenShortPosition';
 
 export const CreatePositionCard = () => {
@@ -78,8 +77,13 @@ export const CreatePositionCard = () => {
 
     return (
         <>
-            <LongPosition />
-            <ShortPosition />
+            <TotalPosition />
+
+            <div className="flex flex-col items-center md:items-stretch md:flex-row gap-4 md:w-full max-w-4xl w-screen">
+                <LongPosition />
+                <ShortPosition />
+            </div>
+
             {isConnected ? (
                 <Button
                     className="w-1/3"

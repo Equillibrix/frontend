@@ -29,7 +29,7 @@ export const InputAmount = () => {
             type="number"
             label="Amount"
             labelPlacement="inside"
-            placeholder="Enter amount"
+            placeholder="Enter amount USDC"
             className="w-full m-0 [&_input::-webkit-outer-spin-button]:appearance-none [&_input::-webkit-inner-spin-button]:appearance-none [&_input::-moz-outer-spin-button]:appearance-none [&_input::-moz-inner-spin-button]:appearance-none"
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
