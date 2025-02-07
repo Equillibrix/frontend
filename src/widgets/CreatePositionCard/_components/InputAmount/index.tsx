@@ -1,9 +1,11 @@
 import { Input } from '@nextui-org/react';
 import { useGetBalance } from '@/shared/hooks/useGetBalance';
 import { useStore } from '@/shared/hooks/useStore';
+import { useAccount } from 'wagmi';
 
 export const InputAmount = () => {
-    const userBalance = useGetBalance();
+    const { address, chainId } = useAccount();
+    const { data: userBalance } = useGetBalance({ address, chainId });
     const { setShortAmount } = useStore();
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -35,7 +37,7 @@ export const InputAmount = () => {
             onPaste={handlePaste}
             endContent={
                 <div className="flex md:flex-nowrap mb-4 gap-1 text-xs">
-                    <span className="text-default-400">Balance: </span>
+                    <span className="text-default-400 whitespace-nowrap">USDC balance: </span>
                     <span>{userBalance}</span>
                 </div>
             }
