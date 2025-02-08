@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAccount, useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
+import { useAccount, useSwitchChain, useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
 import { useAppKit } from '@reown/appkit/react';
 import {
     CONTRACT_ABI_LONG_POSITION,
@@ -22,19 +22,28 @@ export const CreatePositionCard = () => {
 
     const convertedSupplyAmount = parseUnits(longAmount.toString(), 18);
     const convertedLeverage = longLeverage * 1000;
-    const convertedSlippage = 500;
+    const slippage = 500;
+    const nftId = 0; // for new position
 
+    const { chains, switchChain } = useSwitchChain();
+
+    // TO DO: calc supplyAmount & borrowAmount and check switchChains
+    // not to forget to check USDC approve
     const handleSubmit = () => {
         if (convertedSupplyAmount && convertedLeverage) {
+            console.log('LONG', convertedSupplyAmount, convertedLeverage);
+            switchChain({ chainId: 8888 }); // Xanachain custom chain
             writeContract({
                 address: CONTRACT_ADDRESS_LONG_POSITION,
                 abi: CONTRACT_ABI_LONG_POSITION,
-                functionName: 'createPosition',
-                args: [convertedSupplyAmount, convertedLeverage, convertedSlippage],
-                value: convertedSupplyAmount,
+                functionName: 'openLeverage',
+                // args: [convertedSupplyAmount, convertedLeverage, convertedSlippage],
+                args: [nftId, supplyAmount, borrowAmount, slippage],
             });
         }
         if (shortAmount && shortLeverage) {
+            switchChain({ chainId: 421614 }); // ARB sepolia
+
             useOpenShortPosition({
                 shortAmount,
                 shortLeverage,
