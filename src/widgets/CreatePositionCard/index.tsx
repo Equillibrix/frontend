@@ -20,8 +20,9 @@ export const CreatePositionCard = () => {
     const { data: hash, writeContract, isPending, error: writeError } = useWriteContract();
     const { longAmount, longLeverage, shortAmount, shortLeverage } = useStore();
 
-    const convertedSupplyAmount = parseUnits(longAmount.toString(), 18);
-    const convertedLeverage = longLeverage * 1000;
+    const convertedSupplyAmount = parseUnits(longAmount, 6);
+    // const convertedLeverage = longLeverage * 1000;
+    const borrowAmount = Number(convertedSupplyAmount) / 2;
     const slippage = 500;
     const nftId = 0; // for new position
 
@@ -30,15 +31,13 @@ export const CreatePositionCard = () => {
     // TO DO: calc supplyAmount & borrowAmount and check switchChains
     // not to forget to check USDC approve
     const handleSubmit = () => {
-        if (convertedSupplyAmount && convertedLeverage) {
-            console.log('LONG', convertedSupplyAmount, convertedLeverage);
+        if (convertedSupplyAmount) {
             switchChain({ chainId: 8888 }); // Xanachain custom chain
             writeContract({
                 address: CONTRACT_ADDRESS_LONG_POSITION,
                 abi: CONTRACT_ABI_LONG_POSITION,
                 functionName: 'openLeverage',
-                // args: [convertedSupplyAmount, convertedLeverage, convertedSlippage],
-                args: [nftId, supplyAmount, borrowAmount, slippage],
+                args: [nftId, convertedSupplyAmount, BigInt(borrowAmount), slippage],
             });
         }
         if (shortAmount && shortLeverage) {

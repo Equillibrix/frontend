@@ -6,7 +6,7 @@ import { useAccount } from 'wagmi';
 export const InputAmount = () => {
     const { address, chainId } = useAccount();
     const { data: userBalance } = useGetBalance({ address, chainId });
-    const { setShortAmount } = useStore();
+    const { setShortAmount, setLongAmount, leverage } = useStore();
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === '+' || event.key === '-') {
@@ -22,7 +22,16 @@ export const InputAmount = () => {
     };
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setShortAmount(event.target.value);
+        const amount = event.target.value;
+
+        const longAmount = (+amount * leverage) / (leverage + 1);
+        const shortAmount = +amount / (leverage + 1);
+
+        const convertedLongAmount = longAmount.toFixed(6).toString();
+        const convertedShortAmount = shortAmount.toFixed(6).toString();
+
+        setLongAmount(convertedLongAmount);
+        setShortAmount(convertedShortAmount);
     };
 
     return (

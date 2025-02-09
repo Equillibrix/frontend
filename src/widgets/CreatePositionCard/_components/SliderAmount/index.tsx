@@ -3,11 +3,12 @@ import { MARKS } from './_constants';
 import { useStore } from '@/shared/hooks/useStore';
 
 export const SliderAmount = () => {
-    const { shortLeverage, setShortLeverage } = useStore();
+    const { shortLeverage, setShortLeverage, setLeverage } = useStore();
 
     const handleChange = (value: number | number[]) => {
         if (typeof value === 'number') {
             setShortLeverage(value);
+            setLeverage(value);
         }
     };
 
