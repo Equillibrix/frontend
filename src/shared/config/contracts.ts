@@ -1,4 +1,4 @@
-export const CONTRACT_ADDRESS_LONG_POSITION = '0x1a9c0ba3B16Cd68cDe1ad0956C953F1ACcc26eD4'; // FROM 07.02.24 USDC
+export const CONTRACT_ADDRESS_LONG_POSITION = '0xD123718929E3eF50408d860A888e2486248aDcA7'; // FROM 10.02.24 USDC without oracle price
 export const CONTRACT_ABI_LONG_POSITION = [
     {
         type: 'constructor',
@@ -964,5 +964,20 @@ export const CONTRACT_ABI_LONG_POSITION = [
             },
         ],
         anonymous: false,
+    },
+];
+
+export const USDC_CONTRACT_ADDRESS_MAINNET = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48';
+export const USDC_ERC20_MINIMAL_ABI = [
+    {
+        constant: false,
+        inputs: [
+            { name: 'spender', type: 'address' },
+            { name: 'amount', type: 'uint256' },
+        ],
+        name: 'approve',
+        outputs: [{ name: '', type: 'bool' }],
+        stateMutability: 'nonpayable',
+        type: 'function',
     },
 ];
