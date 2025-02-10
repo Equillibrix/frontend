@@ -24,8 +24,8 @@ export const InputAmount = () => {
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const amount = event.target.value;
 
-        const longAmount = (+amount * leverage) / (leverage + 1);
-        const shortAmount = +amount / (leverage + 1);
+        const longAmount = (Number(amount) * leverage) / (leverage + 1);
+        const shortAmount = Number(amount) / (leverage + 1);
 
         const convertedLongAmount = longAmount.toFixed(6).toString();
         const convertedShortAmount = shortAmount.toFixed(6).toString();
