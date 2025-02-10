@@ -1,10 +1,12 @@
 import { Input } from '@nextui-org/react';
 import { useGetBalance } from '@/shared/hooks/useGetBalance';
 import { useStore } from '@/shared/hooks/useStore';
+import { useAccount } from 'wagmi';
 
 export const InputAmount = () => {
-    const userBalance = useGetBalance();
-    const { setShortAmount } = useStore();
+    const { address, chainId } = useAccount();
+    const { data: userBalance } = useGetBalance({ address, chainId });
+    const { setShortAmount, setLongAmount, leverage } = useStore();
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === '+' || event.key === '-') {
@@ -20,7 +22,16 @@ export const InputAmount = () => {
     };
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setShortAmount(event.target.value);
+        const amount = event.target.value;
+
+        const longAmount = (Number(amount) * leverage) / (leverage + 1);
+        const shortAmount = Number(amount) / (leverage + 1);
+
+        const convertedLongAmount = longAmount.toFixed(6).toString();
+        const convertedShortAmount = shortAmount.toFixed(6).toString();
+
+        setLongAmount(convertedLongAmount);
+        setShortAmount(convertedShortAmount);
     };
 
     return (
@@ -35,7 +46,7 @@ export const InputAmount = () => {
             onPaste={handlePaste}
             endContent={
                 <div className="flex md:flex-nowrap mb-4 gap-1 text-xs">
-                    <span className="text-default-400">Balance: </span>
+                    <span className="text-default-400 whitespace-nowrap">USDC balance: </span>
                     <span>{userBalance}</span>
                 </div>
             }

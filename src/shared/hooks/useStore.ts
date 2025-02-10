@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 
 interface StoreState {
+    leverage: number;
+    setLeverage: (leverage: number) => void;
     longLeverage: number;
     longAmount: string;
     setLongAmount: (longAmount: string) => void;
@@ -12,6 +14,9 @@ interface StoreState {
 }
 
 export const useStore = create<StoreState>()((set) => ({
+    leverage: 1,
+    setLeverage: (leverage) => set(() => ({ leverage })),
+
     longAmount: '0',
     longLeverage: 1,
     setLongAmount: (longAmount) => set(() => ({ longAmount })),

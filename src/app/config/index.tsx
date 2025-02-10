@@ -1,4 +1,4 @@
-import { cookieStorage, createStorage, http } from '@wagmi/core';
+import { cookieStorage, createStorage, http, fallback, webSocket } from '@wagmi/core';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { baseSepolia, sepolia, arbitrumSepolia, mainnet } from '@reown/appkit/networks';
 import { customChain } from '@/shared/config';
@@ -22,6 +22,9 @@ export const wagmiAdapter = new WagmiAdapter({
     networks,
     transports: {
         [customChain.id]: http(process.env.NEXT_PUBLIC_RPC_URL),
+        [arbitrumSepolia.id]: fallback([
+            webSocket(process.env.NEXT_PUBLIC_RPC_URL_ARBITRUM_SEPOLIA),
+        ]),
     },
 });
 
