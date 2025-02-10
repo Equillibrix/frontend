@@ -981,3 +981,5 @@ export const USDC_ERC20_MINIMAL_ABI = [
         type: 'function',
     },
 ];
+
+export const USDC_ARB_SEPOLIA = '0x75faf114eafb1bdbe2f0316df893fd58ce46aa4d';
