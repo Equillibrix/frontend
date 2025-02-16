@@ -1,25 +1,39 @@
-import { useEffect, useState } from 'react';
-import { useAccount, useSwitchChain, useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
+import { useState } from 'react';
+import {
+    useAccount,
+    useReadContract,
+    useSwitchChain,
+    useWaitForTransactionReceipt,
+    useWriteContract,
+} from 'wagmi';
+import { waitForTransactionReceipt } from '@wagmi/core';
 import { useAppKit } from '@reown/appkit/react';
 import {
     CONTRACT_ABI_LONG_POSITION,
     CONTRACT_ADDRESS_LONG_POSITION,
     USDC_CONTRACT_ADDRESS_MAINNET,
-    USDC_ERC20_MINIMAL_ABI,
+    USDC_ERC20_ABI,
 } from '@/shared/config/contracts';
 import { useStore } from '@/shared/hooks/useStore';
-import { parseUnits } from 'viem';
 import toast from 'react-hot-toast';
 import { Button } from '@/shared/ui/button';
 import { LongPosition, ShortPosition, TotalPosition } from './_components';
 import useOpenShortPosition from '@/shared/hooks/useOpenShortPosition';
+import { config } from '@/app/config';
+import { parseUnits } from 'viem';
 
 export const CreatePositionCard = () => {
     const { isConnected, chain, address } = useAccount();
     const { open } = useAppKit();
     const [isShortPositionLoading, setIsShortPositionLoading] = useState<boolean>(false);
 
-    const { data: hash, writeContract, isPending, error: writeError } = useWriteContract();
+    const {
+        data: hash,
+        writeContract,
+        isPending,
+        error: writeError,
+        writeContractAsync,
+    } = useWriteContract();
     const { longAmount, shortAmount, shortLeverage, leverage } = useStore();
 
     const borrowAmount = (Number(longAmount) * leverage - Number(longAmount)).toFixed(6).toString();
@@ -28,33 +42,60 @@ export const CreatePositionCard = () => {
 
     const { chains, switchChain } = useSwitchChain();
 
-    // TO DO: refactor
-    const approveUSDC = () => {
-        switchChain({ chainId: 8888 }); // Xanachain custom chain
+    // Check if user has already approved USDC
+    const { data: allowance } = useReadContract({
+        abi: USDC_ERC20_ABI,
+        address: USDC_CONTRACT_ADDRESS_MAINNET,
+        functionName: 'allowance',
+        args: [address, CONTRACT_ADDRESS_LONG_POSITION],
+    });
 
-        writeContract({
-            abi: USDC_ERC20_MINIMAL_ABI,
+    // TO DO: refactor
+    const approveUSDC = async () => {
+        if (chain?.id !== 8888) {
+            switchChain({ chainId: 8888 }); // Xanachain custom chain
+        }
+
+        const approveHash = await writeContractAsync({
+            abi: USDC_ERC20_ABI,
             address: USDC_CONTRACT_ADDRESS_MAINNET,
             functionName: 'approve',
             args: [CONTRACT_ADDRESS_LONG_POSITION, parseUnits(longAmount, 6)],
         });
+
+        toast.dismiss();
+        const txReceipt = await waitForTransactionReceipt(config, { hash: approveHash });
+
+        console.log('Approve USDC:', txReceipt.transactionHash);
+        toast.success('USDC Approved!');
     };
 
-    const openLongPosition = () => {
-        switchChain({ chainId: 8888 }); // Xanachain custom chain
+    const openLongPosition = async () => {
+        toast.dismiss();
+        if (chain?.id !== 8888) {
+            switchChain({ chainId: 8888 }); // Xanachain custom chain
+        }
 
         if (longAmount && borrowAmount) {
-            writeContract({
+            const openPosisitionHash = await writeContractAsync({
                 address: CONTRACT_ADDRESS_LONG_POSITION,
                 abi: CONTRACT_ABI_LONG_POSITION,
                 functionName: 'openLeverage',
                 args: [nftId, parseUnits(longAmount, 6), parseUnits(borrowAmount, 6), slippage],
             });
+
+            toast.dismiss();
+            const txReceipt = await waitForTransactionReceipt(config, { hash: openPosisitionHash });
+
+            console.log('Position opened:', txReceipt.transactionHash);
+            toast.success('Long position opened!');
         }
     };
 
-    const handleSubmit = async () => {
-        switchChain({ chainId: 421614 }); // ARB sepolia
+    const openShortPosition = async () => {
+        if (chain?.id !== 421614) {
+            switchChain({ chainId: 421614 }); // Arb Sepolia chain
+        }
 
         if (shortAmount && shortLeverage) {
             useOpenShortPosition({
@@ -75,27 +116,48 @@ export const CreatePositionCard = () => {
     } = useWaitForTransactionReceipt({
         hash,
     });
-
-    useEffect(() => {
-        if (writeError) {
-            toast.dismiss();
-            toast.error(writeError.message);
+    // TO DO: refactor
+    const handleCreatePosition = async () => {
+        if (!isConnected) {
+            open();
+            return;
         }
 
-        if (status === 'success') {
-            toast.dismiss();
-            toast.success('Successfully created position');
-        }
+        try {
+            // setIsLoading(true);
 
-        if (status === 'error') {
-            toast.dismiss();
-            toast.error(`Transaction failed: ${receiptError?.name}`);
-        }
+            // Step 1: Switch to Xanachain (8888)
+            if (chain?.id !== 8888) {
+                toast.loading('Switching to Xanachain...');
+                switchChain({ chainId: 8888 });
+                setTimeout(() => {
+                    toast.dismiss();
+                }, 1000);
+            }
 
-        return () => {
-            toast.dismiss();
-        };
-    }, [status, receiptError, writeError]);
+            console.log(
+                Number(allowance),
+                Number(parseUnits(longAmount, 6)),
+                Number(allowance) < Number(parseUnits(longAmount, 6)),
+            );
+            // Step 2: Approve USDC
+            if (
+                Number(allowance) < Number(parseUnits(longAmount, 6)) ||
+                (Number(allowance) === 0 && Number(longAmount) > 0)
+            ) {
+                toast.loading('Approving USDC...');
+                await approveUSDC();
+            }
+
+            // Step 3: Open Long Position
+            await openLongPosition();
+
+            // Step 4: Open Short Position
+            await openShortPosition();
+        } catch (error) {
+            console.error('Error creating position:', error);
+        }
+    };
 
     return (
         <>
@@ -108,11 +170,8 @@ export const CreatePositionCard = () => {
 
             {isConnected ? (
                 <div className="flex gap-4">
-                    <Button onClick={approveUSDC}>Approve</Button>
-                    <Button onClick={openLongPosition}>Open Long</Button>
                     <Button
-                        className="w-1/3"
-                        onClick={handleSubmit}
+                        onClick={handleCreatePosition}
                         isLoading={isPending || isLoading || isShortPositionLoading}
                         disabled={isShortPositionLoading}
                     >
