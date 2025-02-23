@@ -25,14 +25,14 @@ export const useGetUsersPositions = (userAddress: Address | undefined) => {
     });
 
     // формируем массив запросов для получения информации по каждой позиции
-    const contracts = (positionIds as number[] || []).map((nftId) => ({
+    const contracts = [{
         address: CONTRACT_ADDRESS_LONG_POSITION,
         abi: CONTRACT_ABI_LONG_POSITION,
         functionName: 'getPositionInfo',
-        args: [nftId]
-    })) as const;
+        args: [(positionIds as number[] || [])]
+    }] as const;
 
-    // получение информации по всем позиции
+    // получение информации по всем позициям
     const { data: positionsData, isLoading: isLoadingPositions } = useContractReads({
         contracts, 
         query: {
