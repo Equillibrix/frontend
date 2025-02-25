@@ -62,7 +62,7 @@ export const CreatePositionCard = () => {
             functionName: 'approve',
             args: [CONTRACT_ADDRESS_LONG_POSITION, parseUnits(longAmount, 6)],
         });
-
+        console.log('approveHash', approveHash);
         toast.dismiss();
         const txReceipt = await waitForTransactionReceipt(config, { hash: approveHash });
 
@@ -83,7 +83,7 @@ export const CreatePositionCard = () => {
                 functionName: 'openLeverage',
                 args: [nftId, parseUnits(longAmount, 6), parseUnits(borrowAmount, 6), slippage],
             });
-
+            console.log('openPosisitionHash', openPosisitionHash);
             toast.dismiss();
             const txReceipt = await waitForTransactionReceipt(config, { hash: openPosisitionHash });
 

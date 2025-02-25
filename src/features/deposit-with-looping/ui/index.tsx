@@ -1,34 +1,43 @@
 'use client';
 
 import { Button } from '@/shared/ui/button';
-import { Card, Tooltip } from '@nextui-org/react';
+import { Card } from '@nextui-org/react';
 import { MyPositionCard } from '@/widgets/MyPositionCard/MyPositionCard';
 import { useRouter } from 'next/navigation';
 import { useGetUsersPositions } from '@/shared/hooks/useGetUsersPositions';
-import { useAccount } from 'wagmi';
+import { Address, formatUnits } from 'viem';
+import { useAppKitAccount } from '@reown/appkit/react';
 
 export const DepositWithLoopingCard = () => {
-    const { isConnected, chain, address } = useAccount();
-    const { positions, isLoading } = useGetUsersPositions(address);
+    const { address } = useAppKitAccount();
 
-    let isPositionsExist = positions && positions.length > 0;
+    const { positions, price, isLoading } = useGetUsersPositions(address as Address);
+    const isPositionsExist = positions && positions.length > 0;
 
-    // if (isLoading) {
-    //     return <div>Loading...111</div>
-    // }
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
-    const totalSupply = positions?.reduce((sum, pos) => sum + Number(pos.supply), 0) || 0;
-    const totalBorrow = positions?.reduce((sum, pos) => sum + Number(pos.borrow), 0) || 0;;
-    const totalValue = totalSupply - totalBorrow;
+    const totalSupply =
+        positions?.reduce((sum, pos) => sum + Number(formatUnits(BigInt(pos.supply), 18)), 0) || 0;
+
+    const totalSupplyWithPrice = totalSupply * Number(formatUnits(BigInt(price || 0), 8));
+
+    const totalBorrow =
+        positions?.reduce((sum, pos) => sum + Number(formatUnits(BigInt(pos.borrow), 6)), 0) || 0;
+
+    const totalValue = totalSupplyWithPrice - totalBorrow;
 
     const data = [
-        { id: 1, label: 'Your Total Supply', value: totalSupply },
-        { id: 2, label: 'Total Value', value: totalValue },
-        { id: 3, label: 'Your Total Borrow', value: totalBorrow }
-    ]
+        { id: 1, label: 'Your Total Supply', value: totalSupplyWithPrice.toFixed(2) },
+        { id: 2, label: 'Total Value', value: totalValue.toFixed(2) },
+        { id: 3, label: 'Your Total Borrow', value: totalBorrow.toFixed(2) },
+    ];
 
     if (positions.length > 0) {
-        console.log(`Supply: ${positions[0].supply.toString()}; Borrow: ${positions[0].borrow.toString()}`);
+        console.log(
+            `Supply: ${positions[0].supply.toString()}; Borrow: ${positions[0].borrow.toString()}`,
+        );
     }
 
     const router = useRouter();
