@@ -20,7 +20,7 @@ export const customChain = defineChain({
     blockExplorers: {
         default: {
             name: 'Explorer',
-            url: 'https://dashboard.tenderly.co/explorer/vnet/b3027522-2c03-4ed7-a97f-0c9379b3fc04/transactions',
+            url: 'https://dashboard.tenderly.co/explorer/vnet/0bb5c99e-e9b2-4476-9adc-9025e8913937/transactions',
         },
     },
     contracts: {

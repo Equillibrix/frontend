@@ -1,22 +1,45 @@
 'use client';
 
 import { Button } from '@/shared/ui/button';
-import { Card, Tooltip } from '@nextui-org/react';
+import { Card } from '@nextui-org/react';
 import { MyPositionCard } from '@/widgets/MyPositionCard/MyPositionCard';
 import { useRouter } from 'next/navigation';
-
-const totalSupply = 100;
-const totalBorrow = 75;
-const totalValue = 100;
-
-const data = [
-    { id: 1, label: 'Your Total Supply', value: totalSupply },
-    { id: 2, label: 'Total Value', value: totalValue },
-    { id: 3, label: 'Your Total Borrow', value: totalBorrow },
-];
+import { useGetUsersPositions } from '@/shared/hooks/useGetUsersPositions';
+import { Address, formatUnits } from 'viem';
+import { useAppKitAccount } from '@reown/appkit/react';
 
 export const DepositWithLoopingCard = () => {
-    const isPositionsExist = false;
+    const { address } = useAppKitAccount();
+
+    const { positions, price, isLoading } = useGetUsersPositions(address as Address);
+    const isPositionsExist = positions && positions.length > 0;
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    const totalSupply =
+        positions?.reduce((sum, pos) => sum + Number(formatUnits(BigInt(pos.supply), 18)), 0) || 0;
+
+    const totalSupplyWithPrice = totalSupply * Number(formatUnits(BigInt(price || 0), 8));
+
+    const totalBorrow =
+        positions?.reduce((sum, pos) => sum + Number(formatUnits(BigInt(pos.borrow), 6)), 0) || 0;
+
+    const totalValue = totalSupplyWithPrice - totalBorrow;
+
+    const data = [
+        { id: 1, label: 'Your Total Supply', value: totalSupplyWithPrice.toFixed(2) },
+        { id: 2, label: 'Total Value', value: totalValue.toFixed(2) },
+        { id: 3, label: 'Your Total Borrow', value: totalBorrow.toFixed(2) },
+    ];
+
+    if (positions.length > 0) {
+        console.log(
+            `Supply: ${positions[0].supply.toString()}; Borrow: ${positions[0].borrow.toString()}`,
+        );
+    }
+
     const router = useRouter();
 
     const handleManage = () => {
@@ -53,18 +76,21 @@ export const DepositWithLoopingCard = () => {
 
             {isPositionsExist ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                    <MyPositionCard
-                        id="1460"
-                        token1="ETH"
-                        token2="USDT"
-                        collateral={336.88}
-                        debt={50.1}
-                        supplyAPY={1.62}
-                        borrowAPY={10.55}
-                        ratio={14.84}
-                        maxRatio={90}
-                        onManage={handleManage}
-                    />
+                    {positions.map((position) => (
+                        <MyPositionCard
+                            key={position.nftId.toString()}
+                            id={position.nftId.toString()}
+                            token1="ETH"
+                            token2="USDC"
+                            collateral={Number(position.supply)}
+                            debt={Number(position.borrow)}
+                            supplyAPY={0}
+                            borrowAPY={0}
+                            ratio={0}
+                            maxRatio={0}
+                            onManage={handleManage}
+                        />
+                    ))}
                 </div>
             ) : (
                 <div className="bg-[rgb(31,33,45)] bg-opacity-100 p-4 backdrop-blur-md flex items-center justify-center py-12 rounded-xl">
