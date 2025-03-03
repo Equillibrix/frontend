@@ -12,6 +12,14 @@ export const DepositWithLoopingCard = () => {
     const { address } = useAppKitAccount();
 
     const { positions, price, isLoading } = useGetUsersPositions(address as Address);
+    // positions.push({
+    //     nftId: 999,
+    //     owner: address as Address,
+    //     supply: 10000000000, // 1 ETH
+    //     borrow: 2000000000, // 2000 USDC
+    //     isLiquidated: false
+    // })
+    
     const isPositionsExist = positions && positions.length > 0;
 
     if (isLoading) {
