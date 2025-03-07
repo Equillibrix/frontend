@@ -15,8 +15,8 @@ export const DepositWithLoopingCard = () => {
     // positions.push({
     //     nftId: 999,
     //     owner: address as Address,
-    //     supply: 10000000000, // 1 ETH
-    //     borrow: 2000000000, // 2000 USDC
+    //     supply: 2500, // 10 ETH
+    //     borrow: 2000, // 2000 USDC
     //     isLiquidated: false
     // })
     
@@ -26,7 +26,7 @@ export const DepositWithLoopingCard = () => {
         return <div>Loading...</div>;
     }
 
-    const totalSupply =
+    const totalSupply = 
         positions?.reduce((sum, pos) => sum + Number(formatUnits(BigInt(pos.supply), 18)), 0) || 0;
 
     const totalSupplyWithPrice = totalSupply * Number(formatUnits(BigInt(price || 0), 8));
